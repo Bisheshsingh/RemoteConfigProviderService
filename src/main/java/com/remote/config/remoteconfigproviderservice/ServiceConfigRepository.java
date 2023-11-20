@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flagsmith.FlagsmithClient;
 import com.flagsmith.exceptions.FlagsmithClientError;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.config.environment.Environment;
 import org.springframework.cloud.config.environment.PropertySource;
@@ -15,7 +16,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class ServicePropertiesConfigRepository implements EnvironmentRepository {
+public class ServiceConfigRepository implements EnvironmentRepository {
+    @Value("${config.api.key}")
+    private String apiKey;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Override
     public Environment findOne(final String application, final String profile, final String label) {
@@ -39,10 +44,10 @@ public class ServicePropertiesConfigRepository implements EnvironmentRepository 
 
     private Map<String, String> loadCustomProperties(final String application) throws FlagsmithClientError, JsonProcessingException {
         final FlagsmithClient flagsmithClient = FlagsmithClient.newBuilder()
-                .setApiKey("")
+                .setApiKey(apiKey)
                 .build();
 
-        return new ObjectMapper()
+        return objectMapper
                 .readValue(flagsmithClient.getEnvironmentFlags()
                         .getFeatureValue(application).toString(), new TypeReference<>() {
                 });
