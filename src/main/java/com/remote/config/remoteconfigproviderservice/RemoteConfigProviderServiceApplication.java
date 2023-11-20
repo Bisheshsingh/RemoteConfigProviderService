@@ -8,8 +8,6 @@ import org.springframework.cloud.config.server.EnableConfigServer;
 @EnableConfigServer
 public class RemoteConfigProviderServiceApplication {
     public static void main(String[] args) {
-        System.out.println(System.getenv());
-
         SpringApplication.run(RemoteConfigProviderServiceApplication.class, args);
     }
 }

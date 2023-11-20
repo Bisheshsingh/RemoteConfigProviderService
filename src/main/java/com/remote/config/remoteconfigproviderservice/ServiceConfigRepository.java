@@ -17,7 +17,7 @@ import java.util.Map;
 
 @Component
 public class ServiceConfigRepository implements EnvironmentRepository {
-    @Value("${config.api.key}")
+    @Value("${API_TOKEN}")
     private String apiKey;
     @Autowired
     private ObjectMapper objectMapper;
