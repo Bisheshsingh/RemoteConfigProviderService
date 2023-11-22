@@ -44,5 +44,6 @@ jobs:
 
          - name: Upload To Prod
            run: |
-                (echo "api.key=hello" >> src/main/resources/application.properties)
-                cat src/main/resources/application.properties
+                (echo "api.token=hello" >> src/main/resources/application.properties)
+                git add .
+                git commit -m "Adding API Token"
