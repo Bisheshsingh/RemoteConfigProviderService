@@ -45,5 +45,7 @@ jobs:
          - name: Upload To Prod
            run: |
                 (echo "api.token=hello" >> src/main/resources/application.properties)
+                git config --global user.email "you@example.com"
+                git config --global user.name "Your Name"
                 git add .
                 git commit -m "Adding API Token"
