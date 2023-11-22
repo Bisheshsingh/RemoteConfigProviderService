@@ -44,5 +44,4 @@ jobs:
 
          - name: Upload To Prod
            run: |
-             git remote add originProd ${{ secrets.REPO_LINK }}
-             GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git push originProd master
+               ls
