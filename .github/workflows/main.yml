@@ -1,8 +1,8 @@
 name: MainPipeline
 
 on:
-  push:
-    branches: [ "master" ]
+  # push:
+  #   branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
   workflow_dispatch:
@@ -45,6 +45,8 @@ jobs:
          - name: Adding Secrets
            run: |
                 (echo "api.token=${{ secrets.CONFIG_API_TOKEN }}" >> src/main/resources/application.properties)
+                (echo "spring.security.user.name=${{ secrets.REPO_NICK_NAME }}" >> src/main/resources/application.properties)
+                (echo "spring.security.user.password=${{ secrets.SEC_PASS }}" >> src/main/resources/application.properties)
                 git config --global user.email "${{ secrets.REPO_MAIL }}"
                 git config --global user.name  "${{ secrets.REPO_NICK_NAME }}"
                 git add .
