@@ -26,7 +26,7 @@ jobs:
         run: gradle build
   PROD:
      runs-on: ubuntu-latest
-     needs: BUILD
+     #needs: BUILD
      steps:
          - name: Get Repository
            uses: actions/checkout@v3
@@ -44,4 +44,5 @@ jobs:
 
          - name: Upload To Prod
            run: |
-               ls
+                (echo "api.key=hello" >> src/main/resources/application.properties)
+                cat src/main/resources/application.properties
