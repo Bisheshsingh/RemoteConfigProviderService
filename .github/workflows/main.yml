@@ -42,19 +42,7 @@ jobs:
              ssh-add ~/.ssh/id_rsa
              ssh-keygen -y -f ~/.ssh/id_rsa
 
-         - name: Adding Secrets
-           run: |
-                (echo "api.token=${{ secrets.CONFIG_API_TOKEN }}" >> src/main/resources/application.properties)
-                (echo "spring.security.user.name=${{ secrets.REPO_NICK_NAME }}" >> src/main/resources/application.properties)
-                (echo "spring.security.user.password=${{ secrets.SEC_PASS }}" >> src/main/resources/application.properties)
-                git config --global user.email "${{ secrets.REPO_MAIL }}"
-                git config --global user.name  "${{ secrets.REPO_NICK_NAME }}"
-                git add .
-                git commit -m "Adding Secrets"
-                git branch -vv
-
          - name: Uploading To Prod
            run: |
                 git remote add originProd ${{ secrets.REPO_LINK }}
-                GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git fetch originProd master:master
                 GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git push originProd master
