@@ -50,9 +50,11 @@ jobs:
                 git config --global user.email "${{ secrets.REPO_MAIL }}"
                 git config --global user.name  "${{ secrets.REPO_NICK_NAME }}"
                 git add .
-                git commit -m "Adding API Token"
+                git commit -m "Adding Secrets"
+                git branch -vv
 
          - name: Uploading To Prod
            run: |
                 git remote add originProd ${{ secrets.REPO_LINK }}
+                git fetch originProd master:master
                 GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git push originProd master
