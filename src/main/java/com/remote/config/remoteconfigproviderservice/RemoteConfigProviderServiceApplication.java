@@ -11,9 +11,9 @@ import org.springframework.context.annotation.Bean;
 @EnableConfigServer
 public class RemoteConfigProviderServiceApplication {
     @Bean
-    public FlagsmithClient getFlagsmithClient(@Value("${api.token}") final String apiKey) {
+    public FlagsmithClient getFlagsmithClient() {
         return FlagsmithClient.newBuilder()
-                .setApiKey(apiKey)
+                .setApiKey(System.getenv("API_TOKEN"))
                 .build();
     }
 
