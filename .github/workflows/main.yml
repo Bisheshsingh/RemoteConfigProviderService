@@ -1,4 +1,4 @@
-name: Pipeline
+name: MainPipeline
 
 on:
   push:
@@ -42,7 +42,15 @@ jobs:
              ssh-add ~/.ssh/id_rsa
              ssh-keygen -y -f ~/.ssh/id_rsa
 
-         - name: Upload To Prod
+         - name: Adding Secrets
            run: |
-             git remote add originProd ${{ secrets.REPO_LINK }}
-             GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git push originProd master
+                (echo "api.token=${{ secrets.CONFIG_API_TOKEN }}" >> src/main/resources/application.properties)
+                git config --global user.email "${{ secrets.REPO_MAIL }}"
+                git config --global user.name  "${{ secrets.REPO_NICK_NAME }}"
+                git add .
+                git commit -m "Adding API Token"
+
+         - name: Uploading To Prod
+           run: |
+                git remote add originProd ${{ secrets.REPO_LINK }}
+                GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git push originProd master
