@@ -1,6 +1,5 @@
 package com.remote.config.remoteconfigproviderservice;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flagsmith.FlagsmithClient;
 import lombok.AllArgsConstructor;
@@ -21,13 +20,13 @@ public class ServiceConfigRepository implements EnvironmentRepository {
 
     @Override
     public Environment findOne(final String application, final String profile, final String label) {
-        Map<String, String> properties;
+        Map<?, ?> properties;
 
         try {
             properties = objectMapper
                     .readValue(flagsmithClient.getEnvironmentFlags()
                             .getFeatureValue(application).toString(),
-                            new TypeReference<>() {});
+                            Map.class);
         } catch (Exception e) {
             properties = new HashMap<>();
         }

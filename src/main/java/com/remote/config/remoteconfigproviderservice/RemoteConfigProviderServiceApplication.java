@@ -1,5 +1,7 @@
 package com.remote.config.remoteconfigproviderservice;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.flagsmith.FlagsmithClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 
 @SpringBootApplication
 @EnableConfigServer
@@ -22,10 +25,11 @@ public class RemoteConfigProviderServiceApplication {
     public UserDetailsService userDetailsService(@Autowired final PasswordEncoder passwordEncoder,
                                                  @Value("${USER_ID}") final String userId,
                                                  @Value("${USER_PASS}") final String password) {
-        final InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+        final UserDetailsManager manager = new InMemoryUserDetailsManager();
         manager.createUser(User
                 .withUsername(userId)
                 .password(passwordEncoder.encode(password)).build());
+
         return manager;
     }
 
@@ -39,6 +43,11 @@ public class RemoteConfigProviderServiceApplication {
         return FlagsmithClient.newBuilder()
                 .setApiKey(apiKey)
                 .build();
+    }
+
+    @Bean
+    public ObjectMapper getObjectMapper() {
+        return new ObjectMapper(new YAMLFactory());
     }
 
     public static void main(String[] args) {
