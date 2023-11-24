@@ -1,6 +1,7 @@
 package com.remote.config.remoteconfigproviderservice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.flagsmith.FlagsmithClient;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +17,13 @@ import java.util.Map;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class ServiceConfigRepository implements EnvironmentRepository {
     private FlagsmithClient flagsmithClient;
-    private ObjectMapper objectMapper;
 
     @Override
     public Environment findOne(final String application, final String profile, final String label) {
         Map<?, ?> properties;
 
         try {
-            properties = objectMapper
+            properties = new ObjectMapper(new YAMLFactory())
                     .readValue(flagsmithClient.getEnvironmentFlags()
                             .getFeatureValue(application).toString(),
                             Map.class);

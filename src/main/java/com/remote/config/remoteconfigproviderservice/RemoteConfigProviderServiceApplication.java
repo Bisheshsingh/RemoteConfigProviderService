@@ -1,7 +1,5 @@
 package com.remote.config.remoteconfigproviderservice;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.flagsmith.FlagsmithClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,11 +41,6 @@ public class RemoteConfigProviderServiceApplication {
         return FlagsmithClient.newBuilder()
                 .setApiKey(apiKey)
                 .build();
-    }
-
-    @Bean
-    public ObjectMapper getObjectMapper() {
-        return new ObjectMapper(new YAMLFactory());
     }
 
     public static void main(String[] args) {
