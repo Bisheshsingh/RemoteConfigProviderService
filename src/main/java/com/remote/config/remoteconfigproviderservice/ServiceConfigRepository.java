@@ -1,5 +1,6 @@
 package com.remote.config.remoteconfigproviderservice;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.flagsmith.FlagsmithClient;
@@ -11,6 +12,7 @@ import org.springframework.cloud.config.server.environment.EnvironmentRepository
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 @Component
@@ -20,15 +22,16 @@ public class ServiceConfigRepository implements EnvironmentRepository {
 
     @Override
     public Environment findOne(final String application, final String profile, final String label) {
-        Map<?, ?> properties;
+        final Map<String, String> properties = new HashMap<>();
+        final ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
 
         try {
-            properties = new ObjectMapper(new YAMLFactory())
-                    .readValue(flagsmithClient.getEnvironmentFlags()
-                            .getFeatureValue(application).toString(),
-                            Map.class);
+            final String fetchRawValue = flagsmithClient.getEnvironmentFlags()
+                    .getFeatureValue(application).toString();
+
+            flattenNode("", objectMapper.readTree(fetchRawValue), properties);
         } catch (Exception e) {
-            properties = new HashMap<>();
+            properties.clear();
         }
 
         final PropertySource propertySource = new PropertySource(label, properties);
@@ -38,5 +41,26 @@ public class ServiceConfigRepository implements EnvironmentRepository {
         environment.add(propertySource);
 
         return environment;
+    }
+
+    private static void flattenNode(final String currentPath, final JsonNode node,
+                                    final Map<String, String> properties) {
+        if (node.isObject()) {
+            final Iterator<Map.Entry<String, JsonNode>> fields = node.fields();
+
+            while (fields.hasNext()) {
+                final Map.Entry<String, JsonNode> entry = fields.next();
+
+                flattenNode(currentPath + entry.getKey() + ".", entry.getValue(), properties);
+            }
+        } else if (node.isArray()) {
+            for (int i = 0; i < node.size(); i++) {
+                final String path = currentPath.substring(0, currentPath.length() - 1);
+
+                flattenNode(path + "[" + i + "].", node.get(i), properties);
+            }
+        } else {
+            properties.put(currentPath.substring(0, currentPath.length() - 1), node.asText());
+        }
     }
 }
